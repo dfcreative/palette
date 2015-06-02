@@ -8,6 +8,7 @@
 
 var quantize = require('quantize');
 var readimage = require('readimage');
+var fs = require('fs');
 
 
 /**
@@ -30,12 +31,12 @@ exports.version = require('./package').version;
  * Returning value is passed to a callback
  *
  * @param {String} path
- * @param {Number} n
  * @param {Function} cb
+ * @param {Number} n
  * @api public
  */
 
-function palette(path, n, cb) {
+function palette(path, cb, n) {
   var file = fs.readFileSync(path);
 
   n = n || 5;
