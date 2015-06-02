@@ -21,7 +21,7 @@ module.exports = palette;
  * Library version.
  */
 
-exports.version = require('../package.json').version;
+exports.version = require('./package').version;
 
 
 /**
