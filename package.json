@@ -1,6 +1,6 @@
 {
   "name": "image-palette",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Get palette for any image file, no node-canvas",
   "keywords": [
     "palette",
