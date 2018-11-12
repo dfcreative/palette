@@ -1,6 +1,6 @@
 # image-palette [![Build Status](https://travis-ci.org/dy/image-palette.svg?branch=master)](https://travis-ci.org/dy/image-palette) [![unstable](https://img.shields.io/badge/stability-unstable-green.svg)](http://github.com/badges/stability-badges)
 
-Extract palette from pixels array, return pixels mapped to palette. Useful for organizing palette-based encoding (like GIF) or various limited colors renderers, like [gl-scatter2d](https://ghub.io/gl-scatter2d).
+Extract palette from pixels array, return pixels mapped to palette. Useful for organizing palette-based encoding (like GIF) or various limited colors renderers, like [gl-scatter2d](https://ghub.io/gl-scatter2d). Inspired by [get-rgba-palette](https://github.com/mattdesl/get-rgba-palette).
 
 ## Usage
 
@@ -29,7 +29,6 @@ Extract palette from the input `pixels` array with `rgba` pixels sequence, wheth
 * [image-pixels](https://ghub.io/image-pixels) − load pixels data from any image source.
 * [image-save](https://ghub.io/image-save) − save image/pixel data to a file, canvas or array.
 * [image-equal](https://ghub.io/image-equal) − test if two images are equal, based on fuzzy comparison.
-* [get-rgba-palette](https://ghub.io/get-rgba-palette) − quantized palette extractor, a base for this package.
 
 ## License
 
