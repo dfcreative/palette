@@ -1,6 +1,8 @@
 # image-palette [![Build Status](https://travis-ci.org/dy/image-palette.svg?branch=master)](https://travis-ci.org/dy/image-palette) [![unstable](https://img.shields.io/badge/stability-unstable-green.svg)](http://github.com/badges/stability-badges)
 
-Extract palette from pixels array, return pixels mapped to palette. Useful for organizing palette-based encoding (like GIF) or various limited colors renderers, like [gl-scatter2d](https://ghub.io/gl-scatter2d). Inspired by [get-rgba-palette](https://github.com/mattdesl/get-rgba-palette).
+Extract palette from pixels array, return pixels mapped to palette. Useful for organizing [palette-based encoding](https://ghub.io/image-encode), like GIF, or various limited colors renderers, like [gl-scatter2d](https://ghub.io/gl-scatter2d).
+
+Inspired by [get-rgba-palette](https://github.com/mattdesl/get-rgba-palette).
 
 ## Usage
 
