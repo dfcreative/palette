@@ -13,7 +13,7 @@ module.exports.average = quantized
 
 // return directly counted colors, if src contains less than maxCount of them
 function palette(src, maxCount) {
-  if (maxCount == null) maxCount = 5
+  if (maxCount == null || typeof maxCount !== 'number') maxCount = 5
 
   if (!maxCount) return {colors: [], ids: [], amount: []}
   if (maxCount === 1) return average(src)
@@ -56,13 +56,13 @@ function palette(src, maxCount) {
 
 // return quantized palette colors
 function quantized (src, count) {
-  if (count == null) count = 5
+  if (count == null || typeof count !== 'number') count = 5
 
   if (!count) return {colors: [], ids: [], amount: []}
   if (count === 1) return average(src)
 
   var pixels = u8(src)
-  var total = src.length >> 2
+  var total = pixels.length >> 2
 
   var pixelArray = []
   for (var i=0, len=pixels.length; i<len; i+=4) {

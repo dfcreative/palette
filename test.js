@@ -11,20 +11,33 @@ t('readme', async t => {
 	var data = await img('./examples/test_pattern.png')
 	var {ids, colors, amount} = palette(data, 100)
 
+	t.equal(ids.length, 16 * 8)
+	t.equal(colors.length, 8)
+	t.equal(amount.length, 8)
 	t.deepEqual(unpack(ids, colors), data.data)
 
 	t.end()
-
-
-	function unpack(ids, colors) {
-		var res = []
-		for (let i = 0; i < ids.length; i++) {
-			var color = colors[ids[i]]
-			res.push(...color)
-		}
-		return res
-	}
 })
+
+t('fixture', async t => {
+	var data = await img('./examples/test_pattern.png')
+	var {ids, colors, amount} = palette(data, 3)
+
+	t.equal(ids.length, 16 * 8)
+	t.equal(colors.length, 3)
+	t.equal(amount.length, 3)
+
+	t.end()
+})
+
+function unpack(ids, colors) {
+	var res = []
+	for (let i = 0; i < ids.length; i++) {
+		var color = colors[ids[i]]
+		res.push(...color)
+	}
+	return res
+}
 
 
 // get-rgba-palette case
