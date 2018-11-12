@@ -1,60 +1,136 @@
 /*!
  * @module image-palette
  */
+ 'use strict'
 
-/**
- * Module dependencies.
- */
+var cid = require('color-id')
+var u8 = require('to-uint8')
+var quantize = require('quantize')
 
-var quantize = require('quantize');
-var readimage = require('readimage');
-var fs = require('fs');
+module.exports = palette
+module.exports.quantized = quantized
+module.exports.average = quantized
 
+// return directly counted colors, if src contains less than maxCount of them
+function palette(src, maxCount) {
+  if (maxCount == null) maxCount = 5
 
-/**
- * Expose `palette`.
- */
+  if (!maxCount) return {colors: [], ids: [], amount: []}
+  if (maxCount === 1) return average(src)
 
-module.exports = palette;
+  var pixels = u8(src)
+  var total = pixels.length >> 2
 
+  var colorIds = {}
+  var colors = []
+  var count = []
+  var ids = Array(total)
 
-/**
- * Library version.
- */
+  for (var i = 0; i < pixels.length; i += 4) {
+    var rgb = pixels.subarray(i, i + 3)
+    var irgb = cid(rgb, false)
 
-exports.version = require('./package').version;
+    // register new color
+    if (colorIds[irgb] == null) {
+      // if palette goes over the indicated maxColors, use quantization
+      if (colors.length >= maxCount) {
+        return quantized(src, maxCount)
+      }
 
-
-/**
- * Return the color palette for the file given in `path`
- * consisting of `n` RGB color values, defaulting to 5.
- * Returning value is passed to a callback
- *
- * @param {String} path
- * @param {Function} cb
- * @param {Number} n
- * @api public
- */
-
-function palette(path, cb, n) {
-  var file = fs.readFileSync(path);
-
-  n = n || 5;
-
-  return readimage(file, function (err, image) {
-    //transform image data for quantization
-    var rawData = image.frames[0].data;
-    var len = rawData.length;
-    var data = [];
-
-    for (var i = 0; i < len; i += 4) {
-      // semi-transparent
-      if (rawData[i + 3] < 0xaa) continue;
-      data.push([rawData[i], rawData[i + 1], rawData[i + 2]]);
+      colorIds[irgb] = colors.length
+      colors.push(pixels.subarray(i, i + 4))
     }
 
-    var colors = quantize(data, n).palette();
+    count[colorIds[irgb]] = (count[colorIds[irgb]] || 0) + 1
 
-    cb(colors);
-  });
+    ids[i >> 2] = colorIds[irgb]
+  }
+
+  return {
+    colors: colors,
+    ids: ids,
+    amount: count.map(function (v) { return v / total })
+  }
+}
+
+
+// return quantized palette colors
+function quantized (src, count) {
+  if (count == null) count = 5
+
+  if (!count) return {colors: [], ids: [], amount: []}
+  if (count === 1) return average(src)
+
+  var pixels = u8(src)
+  var total = src.length >> 2
+
+  var pixelArray = []
+  for (var i=0, len=pixels.length; i<len; i+=4) {
+    var r = pixels[i + 0],
+        g = pixels[i + 1],
+        b = pixels[i + 2],
+        a = pixels[i + 3]
+
+    pixelArray.push([ r, g, b ])
+  }
+
+  // fix because quantize breaks on < 2
+  var cluster = quantize(pixelArray, count)
+  var vboxes = cluster.vboxes.map(function (vb) {
+    vb.size = vb.vbox.count() * vb.vbox.volume()
+    return vb
+  }).slice(0, count)
+
+  var colorIds = {}
+  var colors = []
+  var ids = Array(total)
+  var sum = 0
+
+  for (var i = 0; i < vboxes.length; i++) {
+    var vbox = vboxes[i]
+    var color = vbox.color
+    color.push(255)
+    var colorId = cid(color, false)
+    colorIds[colorId] = colors.length
+    colors.push(color)
+    sum += vbox.size
+  }
+
+  // generate ids
+  for (var i = 0; i < total; i++) {
+    var color = cluster.map(pixelArray[i])
+    var colorId = cid(color, false)
+    ids[i] = colorIds[colorId]
+  }
+
+  return {
+    colors: colors,
+    ids: ids,
+    amount: vboxes.map(function (vb) {
+      return vb.size / sum
+    })
+  }
+}
+
+// single-color calc
+function average (src) {
+  var pixels = u8(src)
+  var total = pixels.length >> 2
+
+  var sum = [0,0,0,0]
+
+  for (let i = 0; i < src.length; i+=4) {
+    sum[0] += src[i]
+    sum[1] += src[i + 1]
+    sum[2] += src[i + 2]
+    sum[3] += src[i + 3]
+  }
+  var avg = new Uint8Array([sum[0] / total, sum[1] / total, sum[2] / total, sum[3] / total])
+  var ids = new Uint8Array(total)
+
+  return {
+    colors: [avg],
+    amount: [1],
+    ids: ids
+  }
 }

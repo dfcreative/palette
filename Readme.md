@@ -1,25 +1,36 @@
-# Image-palette
+# image-palette [![Build Status](https://travis-ci.org/dy/image-palette.svg?branch=master)](https://travis-ci.org/dy/image-palette) [![unstable](https://img.shields.io/badge/stability-unstable-green.svg)](http://github.com/badges/stability-badges)
 
-Image color palette extraction. Fork of [palette](http://github.com/tj/palette) without node-canvas dependency and async result.
+Extract palette from pixels array, return pixels mapped to palette. Useful for organizing palette-based encoding (like GIF) or various limited colors renderers, like [gl-scatter2d](https://ghub.io/gl-scatter2d).
 
-## Installation
+## Usage
 
-```
-$ npm install image-palette
+[![$ npm install image-palette](http://nodei.co/npm/image-palette.png?mini=true)](http://npmjs.org/package/image-palette)
+
+```javascript
+var palette = require('image-palette')
+var pixels = require('image-pixels')
+
+var {ids, colors} = palette(await pixels('./image.png'))
 ```
 
 ## API
 
- Palette's public API consists of a single function, the one returned by `require()`. This function accepts the `filepath` you wish to compute a color palette for, a callback and an optional number of samples defaulting to `5`.
+### `var {ids, colors, amount} = palette(pixels, count=5)`
 
+Extract palette from the input `pixels` array with `rgba` pixels sequence, whether flat or nested.
 
-```js
-var palette = require('image-palette');
-var Color = require('color');
+* `colors` is a list of extracted colors `[[r, g, b, a], [r, g, b, a], ...]`.
+* `ids` is an array of input pixels mapped to extracted `colors`.
+* `amount` is an array with amounts corresponding to the extracted colors, from `0..1` range.
+* `count` is max number of colors to extract.
 
-var colors = palette('./image.jpg', function (colors) {
-  Color().rgb(colors[0]);
-});
-```
+## Related
 
-[![NPM](https://nodei.co/npm/image-palette.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/image-palette/)
+* [image-pixels](https://ghub.io/image-pixels) − load pixels data from any image source.
+* [image-save](https://ghub.io/image-save) − save image/pixel data to a file, canvas or array.
+* [image-equal](https://ghub.io/image-equal) − test if two images are equal, based on fuzzy comparison.
+* [get-rgba-palette](https://ghub.io/get-rgba-palette) − quantized palette extractor, a base for this package.
+
+## License
+
+© 2018 Dmitry Yv. MIT License.
