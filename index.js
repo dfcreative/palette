@@ -4,7 +4,7 @@
  'use strict'
 
 var cid = require('color-id')
-var u8 = require('to-uint8')
+var pxls = require('pxls')
 var quantize = require('quantize')
 
 module.exports = palette
@@ -18,7 +18,7 @@ function palette(src, maxCount) {
   if (!maxCount) return {colors: [], ids: [], amount: []}
   if (maxCount === 1) return average(src)
 
-  var pixels = u8(src)
+  var pixels = pxls(src)
   var total = pixels.length >> 2
 
   var colorIds = {}
@@ -61,7 +61,7 @@ function quantized (src, count) {
   if (!count) return {colors: [], ids: [], amount: []}
   if (count === 1) return average(src)
 
-  var pixels = u8(src)
+  var pixels = pxls(src)
   var total = pixels.length >> 2
 
   var pixelArray = []
@@ -114,7 +114,7 @@ function quantized (src, count) {
 
 // single-color calc
 function average (src) {
-  var pixels = u8(src)
+  var pixels = pxls(src)
   var total = pixels.length >> 2
 
   var sum = [0,0,0,0]
